@@ -11,58 +11,36 @@
   <script src='https://npmcdn.com/csv2geojson@latest/csv2geojson.js'></script>
   <script src='https://npmcdn.com/@turf/turf/turf.min.js'></script>
   <style>
-    body { margin: 0; padding: 0; }
-    #map {position: absolute; top: 0; bottom: 0; width: 100%;}
-    #sidebar {width: 30%; float: right; background-color: #F0F0F2; padding: 10px;}
-      
-    /* Popup styling */
-
-    .mapboxgl-popup {
-      padding-bottom: 5px;
-    }
-
-    .mapboxgl-popup-close-button {
-      display: none;
-    }
-
-    .mapboxgl-popup-content {
-      font: 400 15px/22px 'Source Sans Pro', 'Helvetica Neue', Sans-serif;
+    body {
+      margin: 0;
       padding: 0;
-      width: 250px;
     }
 
-    .mapboxgl-popup-content-wrapper {
-      padding: 1%;
+    #map {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      width: 70%;
     }
 
-    .mapboxgl-popup-content h3 {
-      background: rgb(183, 184, 185);
-      text-align: center;
-      color: #fff;
-      margin: 0;
-      display: block;
-      padding: 15px;
-      font-weight: 700;
-      margin-top: -5px;
+    #sidebar {
+      position: absolute;
+      top: 0;
+      right: 0;
+      bottom: 0;
+      width: 30%;
+      overflow: auto;
+      background-color: #f9f9f9;
+      padding: 10px;
     }
 
-    .mapboxgl-popup-content h4 {
-      margin: 0;
-      display: block;
-      padding: 10px 3px 10px 10px;
-      font-weight: 400;
+    .sidebar-content {
+      padding: 5px;
+      border-bottom: 1px solid #ddd;
     }
 
-    .mapboxgl-container {
-      cursor: pointer;
-    }
-
-    .mapboxgl-popup-anchor-top>.mapboxgl-popup-content {
-      margin-top: 3px;
-    }
-
-    .mapboxgl-popup-anchor-top>.mapboxgl-popup-tip {
-      border-bottom-color: rgb(61, 59, 59);
+    .sidebar-content h3 {
+      margin-top: 0;
     }
   </style>
 </head>
@@ -71,49 +49,45 @@
 
   <div id='map'></div>
   <div id='sidebar'></div>
-  <script>
 
+  <script>
     var transformRequest = (url, resourceType) => {
       var isMapboxRequest =
         url.slice(8, 22) === "api.mapbox.com" ||
         url.slice(10, 26) === "tiles.mapbox.com";
       return {
-        url: isMapboxRequest
-          ? url.replace("?", "?pluginName=sheetMapper&")
-          : url
+        url: isMapboxRequest ?
+          url.replace("?", "?pluginName=sheetMapper&") :
+          url
       };
     };
-    //YOUR TURN: add your Mapbox token
-    
+
     mapboxgl.accessToken = 'pk.eyJ1IjoiamxhdWVybWEiLCJhIjoiY2xoMHh4anlkMDM4eTNjcXJpZG5idjN5dCJ9.Ph4gYrj6b2Krr3qd0YCfAw'; //Mapbox token 
     var map = new mapboxgl.Map({
       container: 'map', // container id
       style: 'mapbox://styles/jlauerma/clh0zqnph012k01pa7g6dah4j', // YOUR TURN: choose a style: https://docs.mapbox.com/api/maps/#styles
       center: [-73.963, 40.691], // starting position [lng, lat]
-      zoom: 17,// starting zoom
+      zoom: 17, // starting zoom
       transformRequest: transformRequest
     });
 
-    $(document).ready(function () {
+    $(document).ready(function() {
       $.ajax({
         type: "GET",
-        //YOUR TURN: Replace with csv export link
         url: 'https://docs.google.com/spreadsheets/d/1iDEE-Xv8c-Kif7pxB2yoPzyPzRTwxVlhiKO2X6cspmk/gviz/tq?tqx=out:csv&sheet=Sheet1',
         dataType: "text",
-        success: function (csvData) { makeGeoJSON(csvData); }
+        success: function(csvData) {
+          makeGeoJSON(csvData);
+        }
       });
-
-
 
       function makeGeoJSON(csvData) {
         csv2geojson.csv2geojson(csvData, {
           latfield: 'Latitude',
           lonfield: 'Longitude',
           delimiter: ','
-        }, function (err, data) {
-          map.on('load', function () {
-
-            //Add the the layer to the map
+        }, function(err, data) {
+          map.on('load', function() {
             map.addLayer({
               'id': 'csvData',
               'type': 'circle',
@@ -127,54 +101,33 @@
               }
             });
 
-
-            // When a click event occurs on a feature in the csvData layer, open a popup at the
-            // location of the feature, with description HTML from its properties.
-            map.on('click', 'csvData', function (e) {
-              var coordinates = e.features[0].geometry.coordinates.slice();
-
-              //set popup text
-              //You can adjust the values of the popup to match the headers of your CSV.
-              // For example: e.features[0].properties.Name is retrieving information from the field Name in the original CSV.
-              var description = `<h3>` + e.features[0].properties.Name + `</h3>` + `<img src="`+ e.features[0].properties.Media +`" style="max-width:100%;height:auto">` + `<h4>` + `<b>` + `Artist: ` + `</b>` + e.features[0].properties.Artist + `</h4>` + `<h4>` + `<b>` + `Year: ` + `</b>` + e.features[0].properties.Year + `</h4>`;
-
-              // Ensure that if the map is zoomed out such that multiple
-              // copies of the feature are visible, the popup appears
-              // over the copy being pointed to.
-              while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
-                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
-              }
-
-              //add Popup to map
-
-              new mapboxgl.Popup()
-                .setLngLat(coordinates)
-                .setHTML(description)
-                .addTo(map);
+            map.on('click', 'csvData', function(e) {
+              var properties = e.features[0].properties;
+              var sidebarContent = '<div class="sidebar-content">';
+              sidebarContent += '<h3>' + properties.Name + '</h3>';
+              sidebarContent += '<img src="' + properties.Media + '" style="max-width:100%;height:auto">';
+              sidebarContent += '<p><strong>Artist:</strong> ' + properties.Artist + '</p>';
+              sidebarContent += '<p><strong>Year:</strong> ' + properties.Year + '</p>';
+              sidebarContent += '</div>';
+              document.getElementById('sidebar').innerHTML = sidebarContent;
             });
 
-            // Change the cursor to a pointer when the mouse is over the places layer.
-            map.on('mouseenter', 'csvData', function () {
+            map.on('mouseenter', 'csvData', function() {
               map.getCanvas().style.cursor = 'pointer';
             });
 
-            // Change it back to a pointer when it leaves.
-            map.on('mouseleave', 'places', function () {
+            map.on('mouseleave', 'csvData', function() {
               map.getCanvas().style.cursor = '';
             });
 
             var bbox = turf.bbox(data);
-            map.fitBounds(bbox, { padding: 50 });
-
+            map.fitBounds(bbox, {
+              padding: 50
+            });
           });
-
         });
       };
     });
-
-
-
-
   </script>
 
 </body>
