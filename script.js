@@ -1,4 +1,5 @@
-var transformRequest = (url, resourceType) => {
+       
+     var transformRequest = (url, resourceType) => {
       var isMapboxRequest =
         url.slice(8, 22) === "api.mapbox.com" ||
         url.slice(10, 26) === "tiles.mapbox.com";
@@ -8,20 +9,19 @@ var transformRequest = (url, resourceType) => {
           : url
       };
     };
-       
+
     mapboxgl.accessToken = 'pk.eyJ1IjoiamxhdWVybWEiLCJhIjoiY2xzeTByanM2MDh2NzJrbzJ1czk1NDhxMSJ9.jc_JLbR6Hn2OWQFC9b6ClA';
     var map = new mapboxgl.Map({
-      container: 'map', // container id
-      style: 'mapbox://styles/mapbox/light-v11', 
+      container: 'map', 
+      style: 'mapbox://styls/mapbox/navigation-night-v1', 
       center: [-73.963, 40.691], 
-      zoom: 14,
-      transformRequest: transformRequest
+      zoom: 17,
     });
 
     $(document).ready(function () {
       $.ajax({
         type: "GET",
-        url: 'https://docs.google.com/spreadsheets/d/1iDEE-Xv8c-Kif7pxB2yoPzyPzRTwxVlhiKO2X6cspmk/gviz/tq?tqx=out:csv&sheet=Sheet1',
+        url: 'https://docs.google.com/spreadsheets/d/1dLkr70tfAL_-U6ipad9xLF39lHmU8k-xd08uKHkLD5M/gviz/tq?tqx=out:csv&sheet=Sheet1',
         dataType: "text",
         success: function (csvData) { makeGeoJSON(csvData); }
       });
@@ -59,8 +59,15 @@ var transformRequest = (url, resourceType) => {
               //set popup text
               //You can adjust the values of the popup to match the headers of your CSV.
               // For example: e.features[0].properties.Name is retrieving information from the field Name in the original CSV.
-              var description = `<h3>` + e.features[0].properties.Name + `</h3>` + `<h4>` + `<b>` + `Address: ` + `</b>` + e.features[0].properties.Address + `</h4>` + `<h4>` + `<b>` + `Phone: ` + `</b>` + e.features[0].properties.Phone + `</h4>`;
+              var description = `<h3>` + e.features[0].properties.Name + `</h3>` + `<h4>` + `<b>` + `Artist: ` + `</b>` + e.features[0].properties.Artist ;
 
+                // Ensure that if the map is zoomed out such that multiple
+              // copies of the feature are visible, the popup appears
+              // over the copy being pointed to.
+              while (Math.abs(e.lngLat.lng - coordinates[0]) > 180) {
+                coordinates[0] += e.lngLat.lng > coordinates[0] ? 360 : -360;
+              }
+              
               //add Popup to map
 
               new mapboxgl.Popup()
