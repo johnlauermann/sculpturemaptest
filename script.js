@@ -3,7 +3,7 @@ var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/streets-v11',
     center: [-73.963, 40.691],
-    zoom: 12
+    zoom: 14
 });
 
 // Fetch Google Sheets data using Fetch API or other methods
