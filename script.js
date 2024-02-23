@@ -87,6 +87,3 @@ var transformRequest = (url, resourceType) => {
         });
       };
     });
-
-// Add navigation control to the map
-map.addControl(new mapboxgl.NavigationControl());
