@@ -83,10 +83,10 @@
     };
     //YOUR TURN: add your Mapbox token
     
-    mapboxgl.accessToken = 'pk.eyJ1IjoiamxhdWVybWEiLCJhIjoiY2xzeTByanM2MDh2NzJrbzJ1czk1NDhxMSJ9.jc_JLbR6Hn2OWQFC9b6ClA'; //Mapbox token 
+    mapboxgl.accessToken = 'pk.eyJ1IjoiamxhdWVybWEiLCJhIjoiY2xoMHh4anlkMDM4eTNjcXJpZG5idjN5dCJ9.Ph4gYrj6b2Krr3qd0YCfAw'; //Mapbox token 
     var map = new mapboxgl.Map({
       container: 'map', // container id
-      style: 'mapbox://styles/mapbox/navigation-night-v1', // YOUR TURN: choose a style: https://docs.mapbox.com/api/maps/#styles
+      style: 'mapbox://styles/jlauerma/clh0zqnph012k01pa7g6dah4j', // YOUR TURN: choose a style: https://docs.mapbox.com/api/maps/#styles
       center: [-73.963, 40.691], // starting position [lng, lat]
       zoom: 17,// starting zoom
       transformRequest: transformRequest
@@ -121,7 +121,7 @@
               },
               'paint': {
                 'circle-radius': 5,
-                'circle-color': "purple"
+                'circle-color': "#5154CC"
               }
             });
 
@@ -134,7 +134,7 @@
               //set popup text
               //You can adjust the values of the popup to match the headers of your CSV.
               // For example: e.features[0].properties.Name is retrieving information from the field Name in the original CSV.
-              var description = `<h3>` + e.features[0].properties.Name + `</h3>` + `<img src="`+ e.features[0].properties.Media +`" style="max-width:100%;height:auto;">` + `<h4>` + `<b>` + `Artist: ` + `</b>` + e.features[0].properties.Artist + `</h4>` + `<h4>` + `<b>` + `Year: ` + `</b>` + e.features[0].properties.Year + `</h4>`;
+              var description = `<h3>` + e.features[0].properties.Name + `</h3>` + `<img src="`+ e.features[0].properties.Media +`" style="max-width:100%;height:auto">` + `<h4>` + `<b>` + `Artist: ` + `</b>` + e.features[0].properties.Artist + `</h4>` + `<h4>` + `<b>` + `Year: ` + `</b>` + e.features[0].properties.Year + `</h4>`;
 
               // Ensure that if the map is zoomed out such that multiple
               // copies of the feature are visible, the popup appears
