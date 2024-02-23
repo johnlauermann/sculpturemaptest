@@ -3,9 +3,7 @@ var map = new mapboxgl.Map({
     container: 'map',
     style: 'mapbox://styles/mapbox/dark-v11',
     center: [-73.963, 40.691],
-    zoom: 14, 
-    projection: 'albers', 
-    transformRequest: transformRequest
+    zoom: 14
 });
 
 // Add a marker for each point from Google Sheets data
