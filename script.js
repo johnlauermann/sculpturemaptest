@@ -10,10 +10,10 @@
       };
     };
 
-    mapboxgl.accessToken = 'pk.eyJ1IjoiamxhdWVybWEiLCJhIjoiY2xzeTByanM2MDh2NzJrbzJ1czk1NDhxMSJ9.jc_JLbR6Hn2OWQFC9b6ClA';
+    mapboxgl.accessToken = 'pk.eyJ1IjoicHJhdHRzYXZpIiwiYSI6ImNsOGVzYjZ3djAycGYzdm9vam40MG40cXcifQ.YHBszyZW7pMQShx0GZISbw';
     var map = new mapboxgl.Map({
       container: 'map', 
-      style: 'mapbox://styls/mapbox/navigation-night-v1', 
+      style: 'mapbox://styles/prattsavi/clsvsq7rx00eb01p4846bee87', 
       center: [-73.963, 40.691], 
       zoom: 17,
     });
@@ -21,7 +21,7 @@
     $(document).ready(function () {
       $.ajax({
         type: "GET",
-        url: 'https://docs.google.com/spreadsheets/d/1dLkr70tfAL_-U6ipad9xLF39lHmU8k-xd08uKHkLD5M/gviz/tq?tqx=out:csv&sheet=Sheet1',
+        url: 'https://docs.google.com/spreadsheets/d/1iDEE-Xv8c-Kif7pxB2yoPzyPzRTwxVlhiKO2X6cspmk/gviz/tq?tqx=out:csv&sheet=Sheet1',
         dataType: "text",
         success: function (csvData) { makeGeoJSON(csvData); }
       });
