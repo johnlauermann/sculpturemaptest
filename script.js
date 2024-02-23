@@ -1,3 +1,4 @@
+javascript
 var transformRequest = (url, resourceType) => {
     var isMapboxRequest =
         url.slice(8,22) === "api.mapbox.com" ||
