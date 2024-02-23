@@ -10,10 +10,10 @@
       };
     };
 
-    mapboxgl.accessToken = 'pk.eyJ1IjoicHJhdHRzYXZpIiwiYSI6ImNsOGVzYjZ3djAycGYzdm9vam40MG40cXcifQ.YHBszyZW7pMQShx0GZISbw';
+    mapboxgl.accessToken = 'pk.eyJ1IjoiamxhdWVybWEiLCJhIjoiY2xzeTByanM2MDh2NzJrbzJ1czk1NDhxMSJ9.jc_JLbR6Hn2OWQFC9b6ClA';
     var map = new mapboxgl.Map({
       container: 'map', 
-      style: 'mapbox://styles/prattsavi/clsvsq7rx00eb01p4846bee87', 
+      style: 'mmapbox://styls/mapbox/navigation-night-v1', 
       center: [-73.963, 40.691], 
       zoom: 17,
     });
