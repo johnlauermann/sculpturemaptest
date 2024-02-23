@@ -1,75 +1,92 @@
-mapboxgl.accessToken = 'pk.eyJ1IjoiamxhdWVybWEiLCJhIjoiY2xzeTByanM2MDh2NzJrbzJ1czk1NDhxMSJ9.jc_JLbR6Hn2OWQFC9b6ClA';
-var map = new mapboxgl.Map({
-    container: 'map',
-    style: 'mapbox://styles/mapbox/light-v11',
-    center: [-73.963, 40.691],
-    zoom: 14
-});
-
-// Fetch Google Sheets data using Fetch API or other methods
-fetch('https://docs.google.com/spreadsheets/d/1iDEE-Xv8c-Kif7pxB2yoPzyPzRTwxVlhiKO2X6cspmk/edit?usp=sharing')
-    .then(response => response.json())
-    .then(data => {
-        // Process the data and add markers to the map
-        data.forEach(point => {
-            var marker = new mapboxgl.Marker()
-                .setLngLat([point.Longitude, point.Latitude])
-                .addTo(map)
-                .setPopup(new mapboxgl.Popup().setHTML('<h3>' + point.Name + '</h3><p>' + point.Artist + '</p>'))
-                .addTo(map)
-                .getElement()
-                .addEventListener('click', function() {
-                    var sidebarContent = '<h2>' + point.Name + '</h2>';
-                    sidebarContent += '<p>' + point.Artist + '</p>';
-
-                    sidebarContent += '<div id="imageGallery">';
-                    point.images.forEach(function(imageUrl) {
-                        sidebarContent += '<img src="' + imageUrl + '" />';
-                    });
-                    sidebarContent += '</div>';
-
-                    sidebarContent += '<div id="pdfGallery">';
-                    point.pdfs.forEach(function(pdfUrl) {
-                        sidebarContent += '<embed src="' + pdfUrl + '" type="application/pdf" width="100%" height="600px" />';
-                    });
-                    sidebarContent += '</div>';
-
-                    document.getElementById('sidebar').innerHTML = sidebarContent;
-
-                    // Initialize Fancybox for image gallery
-                    $("#imageGallery").find('img').each(function() {
-                        $(this).wrap('<a data-fancybox="gallery" href="' + $(this).attr('src') + '"></a>');
-                    });
-
-                    // Display PDF files using PDF.js
-                    document.getElementById('pdfGallery').querySelectorAll('embed').forEach(function(embedElement) {
-                        var pdfUrl = embedElement.getAttribute('src');
-
-                        pdfjsLib.getDocument(pdfUrl).promise.then(function(pdfDoc) {
-                            pdfDoc.getPage(1).then(function(page) {
-                                var scale = 1.5;
-                                var viewport = page.getViewport({ scale: scale });
-
-                                var canvas = document.createElement('canvas');
-                                var context = canvas.getContext('2d');
-                                canvas.height = viewport.height;
-                                canvas.width = viewport.width;
-
-                                var renderContext = {
-                                    canvasContext: context,
-                                    viewport: viewport
-                                };
-
-                                page.render(renderContext);
-                                embedElement.parentNode.replaceChild(canvas, embedElement);
-                            });
-                        });
-                    });
-                });
-        });
+var transformRequest = (url, resourceType) => {
+      var isMapboxRequest =
+        url.slice(8, 22) === "api.mapbox.com" ||
+        url.slice(10, 26) === "tiles.mapbox.com";
+      return {
+        url: isMapboxRequest
+          ? url.replace("?", "?pluginName=sheetMapper&")
+          : url
+      };
+    };
+       
+    mapboxgl.accessToken = 'pk.eyJ1IjoiamxhdWVybWEiLCJhIjoiY2xzeTByanM2MDh2NzJrbzJ1czk1NDhxMSJ9.jc_JLbR6Hn2OWQFC9b6ClA';
+    var map = new mapboxgl.Map({
+      container: 'map', // container id
+      style: 'mapbox://styles/mapbox/light-v11', 
+      center: [-73.963, 40.691], 
+      zoom: 14,
+      transformRequest: transformRequest
     });
 
-// Add layers and sources to the map for displaying points
+    $(document).ready(function () {
+      $.ajax({
+        type: "GET",
+        url: 'https://docs.google.com/spreadsheets/d/1iDEE-Xv8c-Kif7pxB2yoPzyPzRTwxVlhiKO2X6cspmk/gviz/tq?tqx=out:csv&sheet=Sheet1',
+        dataType: "text",
+        success: function (csvData) { makeGeoJSON(csvData); }
+      });
+
+
+
+      function makeGeoJSON(csvData) {
+        csv2geojson.csv2geojson(csvData, {
+          latfield: 'Latitude',
+          lonfield: 'Longitude',
+          delimiter: ','
+        }, function (err, data) {
+          map.on('load', function () {
+
+            //Add the the layer to the map
+            map.addLayer({
+              'id': 'csvData',
+              'type': 'circle',
+              'source': {
+                'type': 'geojson',
+                'data': data
+              },
+              'paint': {
+                'circle-radius': 5,
+                'circle-color': "purple"
+              }
+            });
+
+
+            // When a click event occurs on a feature in the csvData layer, open a popup at the
+            // location of the feature, with description HTML from its properties.
+            map.on('click', 'csvData', function (e) {
+              var coordinates = e.features[0].geometry.coordinates.slice();
+
+              //set popup text
+              //You can adjust the values of the popup to match the headers of your CSV.
+              // For example: e.features[0].properties.Name is retrieving information from the field Name in the original CSV.
+              var description = `<h3>` + e.features[0].properties.Name + `</h3>` + `<h4>` + `<b>` + `Address: ` + `</b>` + e.features[0].properties.Address + `</h4>` + `<h4>` + `<b>` + `Phone: ` + `</b>` + e.features[0].properties.Phone + `</h4>`;
+
+              //add Popup to map
+
+              new mapboxgl.Popup()
+                .setLngLat(coordinates)
+                .setHTML(description)
+                .addTo(map);
+            });
+
+            // Change the cursor to a pointer when the mouse is over the places layer.
+            map.on('mouseenter', 'csvData', function () {
+              map.getCanvas().style.cursor = 'pointer';
+            });
+
+            // Change it back to a pointer when it leaves.
+            map.on('mouseleave', 'places', function () {
+              map.getCanvas().style.cursor = '';
+            });
+
+            var bbox = turf.bbox(data);
+            map.fitBounds(bbox, { padding: 50 });
+
+          });
+
+        });
+      };
+    });
 
 // Add navigation control to the map
 map.addControl(new mapboxgl.NavigationControl());
