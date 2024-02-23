@@ -1,15 +1,17 @@
-var map = L.map('map').setView([-73.963, 40.691], 10);
+mapboxgl.accessToken = 'pk.eyJ1IjoiamxhdWVybWEiLCJhIjoiY2xzeTByanM2MDh2NzJrbzJ1czk1NDhxMSJ9.jc_JLbR6Hn2OWQFC9b6ClA';
+var map = new mapboxgl.Map({
+    container: 'map',
+    style: 'mapbox://styles/mapbox/streets-v11',
+    center: [-73.963, 40.691],
+    zoom: 14
+});
 
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    maxZoom: 19,
-}).addTo(map);
-
-// Add markers for each point from Google Sheets data
+// Add a marker for each point from Google Sheets data
 // You can fetch and parse the Google Sheets data using Fetch API or other methods
 
-// Function to handle click event on markers
-function onMarkerClick(e) {
-    var pointAttributes = e.target.feature.properties;
+// Add click event listener to display point attributes and galleries in the sidebar
+map.on('click', 'points', function (e) {
+    var pointAttributes = e.features[0].properties;
 
     var sidebarContent = '<h2>' + pointAttributes.title + '</h2>';
     sidebarContent += '<p>' + pointAttributes.description + '</p>';
@@ -57,13 +59,9 @@ function onMarkerClick(e) {
             });
         });
     });
-}
+});
 
 // Add layers and sources to the map for displaying points
 
 // Add navigation control to the map
-
-// Add markers to the map with click event listener
-var marker = L.marker([YOUR_LATITUDE, YOUR_LONGITUDE]).addTo(map);
-marker.bindPopup("Popup content").openPopup();
-marker.on('click', onMarkerClick);
+map.addControl(new mapboxgl.NavigationControl());
