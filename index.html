@@ -13,8 +13,7 @@
   <style>
     body { margin: 0; padding: 0; }
     #map {position: absolute; top: 0; bottom: 0; width: 100%;}
-    #sidebar { position: absolute; top: 0; right: 0; width: 40%; height: 100%; background-color: #F0F0F2; overflow-y: scroll; padding: 10px; }
-  
+      
     /* Popup styling */
 
     .mapboxgl-popup {
@@ -36,7 +35,7 @@
     }
 
     .mapboxgl-popup-content h3 {
-      background: rgb(61, 59, 59);
+      background: rgb(183, 184, 185);
       text-align: center;
       color: #fff;
       margin: 0;
@@ -135,7 +134,7 @@
               //set popup text
               //You can adjust the values of the popup to match the headers of your CSV.
               // For example: e.features[0].properties.Name is retrieving information from the field Name in the original CSV.
-              var description = `<h3>` + e.features[0].properties.Name + `</h3>` + `<img src="` + e.features[0].properties.Media + `" style="max-width:100%;height:auto;">` + `<h4>` + `<b>` + `Artist: ` + `</b>` + e.features[0].properties.Artist + `</h4>` + `<h4>` + `<b>` + `Year: ` + `</b>` + e.features[0].properties.Year + `</h4>`;
+              var description = `<h3>` + e.features[0].properties.Name + `</h3>` + `<img src="`+ e.features[0].properties.Media +`" style="max-width:100%;height:auto;">` + `<h4>` + `<b>` + `Artist: ` + `</b>` + e.features[0].properties.Artist + `</h4>` + `<h4>` + `<b>` + `Year: ` + `</b>` + e.features[0].properties.Year + `</h4>`;
 
               // Ensure that if the map is zoomed out such that multiple
               // copies of the feature are visible, the popup appears
