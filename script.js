@@ -7,7 +7,7 @@ var map = new mapboxgl.Map({
 });
 
 // Fetch Google Sheets data using Fetch API or other methods
-fetch('YOUR_GOOGLE_SHEETS_URL')
+fetch('https://docs.google.com/spreadsheets/d/1iDEE-Xv8c-Kif7pxB2yoPzyPzRTwxVlhiKO2X6cspmk/edit?usp=sharing')
     .then(response => response.json())
     .then(data => {
         // Process the data and add markers to the map
