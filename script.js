@@ -13,14 +13,14 @@ fetch('https://docs.google.com/spreadsheets/d/1iDEE-Xv8c-Kif7pxB2yoPzyPzRTwxVlhi
         // Process the data and add markers to the map
         data.forEach(point => {
             var marker = new mapboxgl.Marker()
-                .setLngLat([point.longitude, point.latitude])
+                .setLngLat([point.Longitude, point.Latitude])
                 .addTo(map)
-                .setPopup(new mapboxgl.Popup().setHTML('<h3>' + point.title + '</h3><p>' + point.description + '</p>'))
+                .setPopup(new mapboxgl.Popup().setHTML('<h3>' + point.Name + '</h3><p>' + point.Artist + '</p>'))
                 .addTo(map)
                 .getElement()
                 .addEventListener('click', function() {
-                    var sidebarContent = '<h2>' + point.title + '</h2>';
-                    sidebarContent += '<p>' + point.description + '</p>';
+                    var sidebarContent = '<h2>' + point.Name + '</h2>';
+                    sidebarContent += '<p>' + point.Artist + '</p>';
 
                     sidebarContent += '<div id="imageGallery">';
                     point.images.forEach(function(imageUrl) {
